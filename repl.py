@@ -13,19 +13,17 @@ def main():
     )
     while True:
         try:
-            line = input("SNOL> ")
+            line = input("\nCommand: ")
             # if we have time, should add "did you mean" feature
             if line.strip() == "EXIT!":
                 break
 
             tokens = lexer.tokenize(line)
             ast = parser.parse(tokens)
-            result = evaluator.evaluate(ast)
-
-            print(result)
+            evaluator.evaluate(ast)
 
         except Exception as e:
-            print(e)
+            print(f"SNOL :> {e}")
 
     print("Evaluator is now terminated...")
 

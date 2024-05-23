@@ -1,3 +1,5 @@
+# TODO: catch trailing tokens after valid line (eg a = b = 5, BEG x 5) 
+
 """
 SNOL (Simple Number-Only Language) GRAMMAR:
 command: assign | expression | input | print
@@ -52,7 +54,7 @@ class InputNode:
     def __init__(self, variable, prompt=None):
         self.variable = variable
         if prompt is None:
-            self.prompt = f"Please enter a value for {variable}: "
+            self.prompt = f"SNOL :> Please enter a value for [{variable}]\nInput: "
         else:
             self.prompt = prompt
 
@@ -110,16 +112,16 @@ class Parser:
         value = self.expression()
         return AssignmentNode(variable, value)
 
-    def print_(self):
-        self.__eat("PRINT")
-        value = self.expression()
-        return PrintNode(value)
-
     def input(self):
         self.__eat("KEYWORD")
         variable = self.current_token.value
         self.__eat("VARIABLE")
         return InputNode(variable)
+
+    def print_(self):
+        self.__eat("KEYWORD")
+        value = self.expression()
+        return PrintNode(value)
 
     def expression(self):
         node = self.term()
@@ -159,4 +161,6 @@ class Parser:
             node = VariableAccessNode(self.current_token.value)
             self.__eat("VARIABLE")
             return node
-        raise Exception(f"Unexpected token type: {self.current_token.type}")
+        raise Exception(
+            f"Unknown command! Does not match any valid command on this language."
+        )

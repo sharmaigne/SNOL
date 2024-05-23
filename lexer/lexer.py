@@ -33,7 +33,7 @@ class Lexer:
         # reserved words
         reservedWords = {
             "BEG": "INPUT",
-            "PRINT": "OUTPUT",
+            "PRINT": "PRINT",
         }
 
         # check if the value is an OPERATOR
