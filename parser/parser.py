@@ -10,6 +10,8 @@ print := PRINT expression
 input := BEG "VARIABLE"
 """
 
+### NODES ###
+
 
 class AssignmentNode:
     def __init__(self, variable, value):
@@ -60,6 +62,9 @@ class PrintNode:
         self.value = value
 
 
+### ----------------- ###
+
+
 class Parser:
     def __init__(self):
         self.tokens = []
@@ -67,14 +72,10 @@ class Parser:
         self.index = 0
 
     def __eat(self, token_type):
-        # print(f"Current token: {self.current_token}")
         if self.current_token.type == "EOF":
             return
 
         if self.current_token.type == token_type:
-            # print(
-            #     f"Eating {self.current_token}, next token is {self.tokens[self.index + 1]}"
-            # )
             self.index += 1
             self.current_token = self.tokens[self.index]
 
@@ -91,7 +92,9 @@ class Parser:
 
     def command(self):
         if self.current_token.type == "VARIABLE":
-            return self.assign()
+            if self.tokens[self.index + 1].type == "ASSIGN":                # example: x = 43.4 + 2
+                return self.assign()
+            return self.expression()                                        # example: x + 43.4
         if self.current_token.type == "KEYWORD":
             if self.current_token.value == "PRINT":
                 return self.print_()
