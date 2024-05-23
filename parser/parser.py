@@ -52,7 +52,7 @@ class InputNode:
     def __init__(self, variable, prompt=None):
         self.variable = variable
         if prompt is None:
-            self.prompt = f"Please enter a value for {variable}:"
+            self.prompt = f"Please enter a value for {variable}: "
         else:
             self.prompt = prompt
 
@@ -92,14 +92,14 @@ class Parser:
 
     def command(self):
         if self.current_token.type == "VARIABLE":
-            if self.tokens[self.index + 1].type == "ASSIGN":                # example: x = 43.4 + 2
+            if self.tokens[self.index + 1].type == "ASSIGN":  # example: x = 43.4 + 2
                 return self.assign()
-            return self.expression()                                        # example: x + 43.4
+            return self.expression()  # example: x + 43.4
         if self.current_token.type == "KEYWORD":
+            if self.current_token.value == "INPUT":
+                return self.input()
             if self.current_token.value == "PRINT":
                 return self.print_()
-            if self.current_token.value == "BEG":
-                return self.input()
         else:
             return self.expression()
 
@@ -116,7 +116,7 @@ class Parser:
         return PrintNode(value)
 
     def input(self):
-        self.__eat("BEG")
+        self.__eat("KEYWORD")
         variable = self.current_token.value
         self.__eat("VARIABLE")
         return InputNode(variable)

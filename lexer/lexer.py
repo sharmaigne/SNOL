@@ -41,7 +41,7 @@ class Lexer:
             return Token(operators[value], value)
 
         if value in reservedWords:
-            return Token(reservedWords[value])
+            return Token("KEYWORD", reservedWords[value])
 
         # check if the value is an INTEGER or a FLOAT
         # follows the EBNF rules:
