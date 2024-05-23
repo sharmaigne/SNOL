@@ -61,11 +61,6 @@ class Lexer:
         self.tokens = line.split()
 
         # TODO: split even further to catch the ones not separated by spaces "BEG1.5+40" -> ["BEG", "1.5", "+", "40"]
-
-        # 1-4.5 -> ["1", "-", "4.5"]
-        # ["1", "-", "4.5"] -> [("INTEGER", 1), ("MINUS", None), ("FLOAT", 4.5)]
-        
-        # 54+-4 -> ["54", "+", "-4"]
         
         # 1+4 5 
         # iterate through the tokens and determine their type
