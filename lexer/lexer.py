@@ -1,23 +1,5 @@
 import re
-
-
-class Token:
-    """A class to represent a token. A token has a type and a value.
-
-    The type is a string that represents the type of the token, such as 'NUMBER' or 'ADD'.
-
-    The value is the actual value of the token, such as 2 or 'ADD'."""
-
-    def __init__(self, type, value=None):
-        self.type = type
-        self.value = value
-
-    def __str__(self):
-        return f"Token({self.type}, {self.value})"
-
-    def __repr__(self):
-        return self.__str__()
-
+from lexer.token import Token
 
 class Lexer:
     """A class to represent a lexer.
@@ -40,6 +22,7 @@ class Lexer:
             "-": "MINUS",
             "*": "MULTIPLY",
             "/": "DIVIDE",
+            "%": "MODULO",
             "(": "LPAREN",
             ")": "RPAREN",
             "=": "ASSIGN",
@@ -50,15 +33,22 @@ class Lexer:
             return Token(operators[value])
 
         # check if the value is an INTEGER or a FLOAT
-        if re.match(r"^\d+$", value):
+        # follows the EBNF rules:
+        # INTEGER = [-]digit{digit}
+        # FLOAT = [-]digit{digit}.{digit}
+        if re.match(r"^-?\d+$", value):
             return Token("INTEGER", int(value))
-        if re.match(r"^\d+\.(\d*)?$", value):
+        if re.match(r"^-?\d+\.(\d*)?$", value):
             return Token("FLOAT", float(value))
 
         # check if the value is a VARIABLE
-        if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", value):
+        # follows the EBNF rule VARIABLE = letter{(letter|digit)}
+        if re.match(r"^[A-Za-z][A-Za-z0-9]*$", value):
             return Token("VARIABLE", value)
-
+    
+        # if the value is not any of the above, raise an exception
+        return Exception(f"Unrecognized token: {value}")
+    
     def tokenize(self, line):
         # This function will take a line of code and return a list of tokens
         # The tokens will be in the form of a list of tuples (type, value)
