@@ -16,6 +16,7 @@ class Lexer:
         # token types
         # "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "LPAREN", "RPAREN", "ASSIGN"
         # "INTEGER", "FLOAT", "VARIABLE"
+        # "INPUT", "OUTPUT"
 
         # operators
         operators = {
@@ -29,9 +30,18 @@ class Lexer:
             "=": "ASSIGN",
         }
 
+        # reserved words
+        reservedWords = {
+            "BEG": "INPUT",
+            "PRINT": "OUTPUT",
+        }
+
         # check if the value is an OPERATOR
         if value in operators:
             return Token(operators[value], value)
+
+        if value in reservedWords:
+            return Token(reservedWords[value])
 
         # check if the value is an INTEGER or a FLOAT
         # follows the EBNF rules:
