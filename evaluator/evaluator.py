@@ -38,19 +38,30 @@ class Evaluator:
         if type(left) != type(right):
             raise Exception("ERROR: Incompatible types")
 
-        return {
-            "+": left + right,
-            "-": left - right,
-            "*": left * right,
-            "/": left / right,
-            "%": left % right,
-        }.get(node.op, Exception(f"Invalid binary operator: {node.op}"))
+        if node.op == "+":
+            return left + right
+        if node.op == "-":
+            return left - right
+        if node.op == "*":
+            return left * right
+        if node.op == "/":
+            # integer division since python defaults to float division
+            if type(left) == int and type(right) == int: 
+                return left // right
+            return left / right
+        if node.op == "%":
+            return left % right
+        # //, **, <, >, <=, >=, ==, !=, ||, &&
+        
+        
+        raise Exception(f"Invalid binary operator: {node.op}")
 
     def evaluate_UnaryOpNode(self, node):
         number = self.evaluate(node.node)
 
         if node.op == "-":
             return -number
+        # !, ~
 
         raise Exception(f"Invalid unary operator: {node.op}")
 

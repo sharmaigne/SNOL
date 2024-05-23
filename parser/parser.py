@@ -131,7 +131,7 @@ class Parser:
 
     def term(self):
         node = self.factor()
-        while self.current_token.type in ("MULTIPLY", "DIVIDE"):
+        while self.current_token.type in ("MULTIPLY", "DIVIDE", "MODULO"):
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.factor())
