@@ -46,6 +46,7 @@ class Lexer:
         if re.match(r"^[A-Za-z][A-Za-z0-9]*$", value):
             return Token("VARIABLE", value)
     
+        # TODO: test that this works
         # if the value is not any of the above, raise an exception
         return Exception(f"Unrecognized token: {value}")
     
@@ -55,13 +56,18 @@ class Lexer:
         # For example, the code "1+4.5" will return [("INTEGER", 1), ("PLUS", None), ("FLOAT", 4.5)]
         # The token types will be 'ADD', 'NUMBER', 'STRING', 'VARIABLE', 'ASSIGN', 'LPAREN', 'RPAREN', 'COMMA', 'SEMI', 'EOF'
         # The token values will be the actual values of the tokens
-        # You will need to use regular expressions
 
         # split the line into tokens by spaces eg "1 + 4" -> ["1", "+", "4"]
         self.tokens = line.split()
 
         # TODO: split even further to catch the ones not separated by spaces "BEG1.5+40" -> ["BEG", "1.5", "+", "40"]
 
+        # 1-4.5 -> ["1", "-", "4.5"]
+        # ["1", "-", "4.5"] -> [("INTEGER", 1), ("MINUS", None), ("FLOAT", 4.5)]
+        
+        # 54+-4 -> ["54", "+", "-4"]
+        
+        # 1+4 5 
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens]
 

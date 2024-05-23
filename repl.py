@@ -1,12 +1,13 @@
 from lexer.lexer import Lexer
-# from parser.parser import Parser
-# from interpreter.interpreter import Interpreter
+from parser.parser import Parser
+
+# from evaluator.evaluator import Evaluator
 
 
 def main():
     lexer = Lexer()
-    # parser = Parser()
-    # interpreter = Interpreter()
+    parser = Parser()
+    # evaluator = Evaluator()
 
     print(
         "The SNOL environment is now active, you may proceed with giving your commands."
@@ -18,16 +19,18 @@ def main():
             if line.strip() == "EXIT!":
                 break
 
-            # tokens = lexer.tokenize(line)
-            # ast = parser.parse(tokens)
-            # result = interpreter.interpret(ast)
+            tokens = lexer.tokenize(line)
+            ast = parser.parse(tokens)
+            # result = evaluator.evaluate(ast)
 
-            result = lexer.tokenize(line)
+            result = ast
 
-            print(result)
+            # print(result)
+
         except Exception as e:
             print(e)
-    print("Interpreter is now terminated...")
+
+    print("Evaluator is now terminated...")
 
 
 if __name__ == "__main__":
