@@ -69,15 +69,12 @@ class Lexer:
         # The token values will be the actual values of the tokens
 
         # split the line into tokens by spaces eg "SUM=1.45+4" -> ["SUM", "=", "1.45", "+", "4"]
-        # \d+\.\d+ matches numbers with decimal points
+        # \d+\.[\d+]? matches floats
         # \d+ matches integers
-        # [a-zA-Z0-9]+ matches words with letters and numbers, cannot detect words starting with numbers
-        # [+\-*/%()=] matches the specified operators
-        self.tokens = re.findall(r"\d+\.\d+|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
-
-        # TODO: split even further to catch the ones not separated by spaces "BEG1.5+40" -> ["BEG", "1.5", "+", "40"]
+        # [a-zA-Z0-9]+ matches words, cannot detect words starting with numbers
+        # [+\-*/%()=] matches operators
+        self.tokens = re.findall(r"\d+\.[\d+]?|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
         
-        # 1+4 5 
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens]
 
