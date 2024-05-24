@@ -172,7 +172,3 @@ class Parser:
             self.__eat("VARIABLE")
         if node:
             return node
-
-        raise Exception(
-            "Unknown command! Does not match any valid command on this language."
-        )
