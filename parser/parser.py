@@ -137,7 +137,7 @@ class Parser:
 
     def expression(self):
         node = self.term()
-        while self.current_token.type in ("PLUS", "MINUS"):
+        while self.current_token.type == "PRED_5":  # PLUS or MINUS
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.term())
@@ -145,7 +145,7 @@ class Parser:
 
     def term(self):
         node = self.factor()
-        while self.current_token.type in ("MULTIPLY", "DIVIDE", "MODULO"):
+        while self.current_token.type == "PRED_6":  # MULTIPLY, DIVIDE, MODULO
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.factor())
@@ -164,8 +164,8 @@ class Parser:
             self.__eat("LPAREN")
             node = self.expression()
             self.__eat("RPAREN")
-        elif self.current_token.type == "MINUS":
-            self.__eat("MINUS")
+        elif self.current_token.value == "-":
+            self.__eat("PRED_5")
             node = UnaryOpNode("-", self.factor())
         elif self.current_token.type == "VARIABLE":
             node = VariableAccessNode(self.current_token.value)
