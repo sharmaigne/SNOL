@@ -85,5 +85,8 @@ class Evaluator:
 
     def evaluate_PrintNode(self, node):
         value = self.evaluate(node.value)
-        print(f"SNOL :> {value}")
+        if node.variable:
+            print(f"SNOL :> [{node.variable}] = {value}")
+        else:
+            print(f"SNOL :> {value}")
         return value

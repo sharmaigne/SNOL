@@ -1,15 +1,15 @@
-# TODO: catch trailing tokens after valid line (eg a = b = 5, BEG x 5) 
+# TODO: catch trailing tokens after valid line (eg a = b = 5, BEG x 5)
 
 """
 SNOL (Simple Number-Only Language) GRAMMAR:
-command: assign | expression | input | print
-assign := "VARIABLE" "ASSIGN" expression
-expression := term { ("PLUS" | "MINUS") term }
-term := factor { ("MULTIPLY" | "DIVIDE" | "MODULO") factor }
-factor := INTEGER | "FLOAT" | "LPAREN" expression "RPAREN" | "VARIABLE"
+command: (assign | expression | input | print) END
+assign := VARIABLE ASSIGN expression
+expression := term { (PLUS | MINUS) term }
+term := factor { (MULTIPLY | DIVIDE | MODULO) factor }
+factor := INTEGER | FLOAT | LPAREN expression RPAREN | VARIABLE
 
-print := PRINT expression
-input := BEG "VARIABLE"
+print := PRINT (expression)
+input := BEG VARIABLE
 """
 
 ### NODES ###
@@ -60,7 +60,8 @@ class InputNode:
 
 
 class PrintNode:
-    def __init__(self, value):
+    def __init__(self, value, variable = None):
+        self.variable = variable
         self.value = value
 
 
@@ -68,6 +69,8 @@ class PrintNode:
 
 
 class Parser:
+    """Recursive descent parser"""
+
     def __init__(self):
         self.tokens = []
         self.current_token = None
@@ -97,11 +100,13 @@ class Parser:
             if self.tokens[self.index + 1].type == "ASSIGN":  # example: x = 43.4 + 2
                 return self.assign()
             return self.expression()  # example: x + 43.4
+
         if self.current_token.type == "KEYWORD":
             if self.current_token.value == "INPUT":
                 return self.input()
             if self.current_token.value == "PRINT":
                 return self.print_()
+
         else:
             return self.expression()
 
@@ -140,27 +145,27 @@ class Parser:
         return node
 
     def factor(self):
+        node = None
+
         if self.current_token.type == "INTEGER":
             node = IntegerNode(self.current_token.value)
             self.__eat("INTEGER")
-            return node
-        if self.current_token.type == "FLOAT":
+        elif self.current_token.type == "FLOAT":
             node = FloatNode(self.current_token.value)
             self.__eat("FLOAT")
-            return node
-        if self.current_token.type == "LPAREN":
+        elif self.current_token.type == "LPAREN":
             self.__eat("LPAREN")
             node = self.expression()
             self.__eat("RPAREN")
-            return node
-        if self.current_token.type == "MINUS":
+        elif self.current_token.type == "MINUS":
             self.__eat("MINUS")
             node = UnaryOpNode("-", self.factor())
-            return node
-        if self.current_token.type == "VARIABLE":
+        elif self.current_token.type == "VARIABLE":
             node = VariableAccessNode(self.current_token.value)
             self.__eat("VARIABLE")
+        if node:
             return node
+        
         raise Exception(
             f"Unknown command! Does not match any valid command on this language."
         )
