@@ -20,7 +20,10 @@ def main():
 
             tokens = lexer.tokenize(line)
             ast = parser.parse(tokens)
-            evaluator.evaluate(ast)
+            result = evaluator.evaluate(ast)
+            
+            # uncomment out to make a REPL
+            # print(f"SNOL :> {result}")
 
         except Exception as e:
             print(f"SNOL :> {e}")

@@ -1,5 +1,3 @@
-# TODO: catch trailing tokens after valid line (eg a = b = 5, BEG x 5)
-
 """
 SNOL (Simple Number-Only Language) GRAMMAR:
 command: (assign | expression | input | print) END
@@ -60,7 +58,7 @@ class InputNode:
 
 
 class PrintNode:
-    def __init__(self, value, variable = None):
+    def __init__(self, value, variable=None):
         self.variable = variable
         self.value = value
 
@@ -96,19 +94,26 @@ class Parser:
         return self.command()
 
     def command(self):
-        if self.current_token.type == "VARIABLE":
-            if self.tokens[self.index + 1].type == "ASSIGN":  # example: x = 43.4 + 2
-                return self.assign()
-            return self.expression()  # example: x + 43.4
+        if self.tokens[self.index + 1].type == "ASSIGN":  # example: x = 43.4 + 2
+            line_ast = self.assign()
 
-        if self.current_token.type == "KEYWORD":
+        elif self.current_token.type == "KEYWORD":
             if self.current_token.value == "INPUT":
-                return self.input()
-            if self.current_token.value == "PRINT":
-                return self.print_()
+                line_ast = self.input()
+            elif self.current_token.value == "PRINT":
+                line_ast = self.print_()
 
         else:
-            return self.expression()
+            line_ast = (
+                self.expression()
+            )  # catches both variable and number first eg x + 4. 4 + 2
+
+        if self.current_token.type == "EOF":
+            return line_ast
+
+        raise Exception(
+            "Unknown command! Does not match any valid command on this language."
+        )
 
     def assign(self):
         variable = self.current_token.value
@@ -121,11 +126,13 @@ class Parser:
         self.__eat("KEYWORD")
         variable = self.current_token.value
         self.__eat("VARIABLE")
+
         return InputNode(variable)
 
     def print_(self):
         self.__eat("KEYWORD")
         value = self.expression()
+
         return PrintNode(value)
 
     def expression(self):
@@ -165,7 +172,7 @@ class Parser:
             self.__eat("VARIABLE")
         if node:
             return node
-        
+
         raise Exception(
-            f"Unknown command! Does not match any valid command on this language."
+            "Unknown command! Does not match any valid command on this language."
         )
