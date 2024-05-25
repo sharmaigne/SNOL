@@ -3,7 +3,8 @@ SNOL (Simple Number-Only Language) GRAMMAR:
 command: (assign | expression | input | print) END
 assign := VARIABLE ASSIGN expression
 expression := term { (PLUS | MINUS) term }
-term := factor { (MULTIPLY | DIVIDE | MODULO) factor }
+term := multiple { (MULTIPLY | DIVIDE | MODULO) multiple }
+multiple := factor { EXPONENT factor }
 factor := INTEGER | FLOAT | LPAREN expression RPAREN | VARIABLE
 
 print := PRINT (expression)
@@ -144,8 +145,16 @@ class Parser:
         return node
 
     def term(self):
-        node = self.factor()
+        node = self.multiple()
         while self.current_token.type == "PRED_6":  # MULTIPLY, DIVIDE, MODULO
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.multiple())
+        return node
+
+    def multiple(self):
+        node = self.factor()
+        while self.current_token.type == "PRED_7":  # EXPONENT (**)
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.factor())

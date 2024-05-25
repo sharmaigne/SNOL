@@ -56,6 +56,8 @@ class Evaluator:
             return left / right
         if node.op == "%":
             return left % right
+        if node.op == "**":
+            return left ** right
         # //, **, <, >, <=, >=, ==, !=, ||, &&
 
         raise Exception(f"Invalid binary operator: {node.op}")
