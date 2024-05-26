@@ -137,7 +137,7 @@ class Parser:
         variable = self.current_token.value
         self.__eat("VARIABLE")
         self.__eat("ASSIGN")
-        value = self.expression()
+        value = self.or_()
         return AssignmentNode(variable, value)
 
     def input(self):

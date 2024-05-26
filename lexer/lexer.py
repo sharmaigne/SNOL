@@ -36,6 +36,7 @@ class Lexer:
             "||": "PRED_1",
             "(": "LPAREN",
             ")": "RPAREN",
+            "=": "ASSIGN",
         }
 
         # reserved words
