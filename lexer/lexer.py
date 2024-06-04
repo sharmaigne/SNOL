@@ -1,6 +1,7 @@
 import re
 from lexer.token import Token
 
+
 class Lexer:
     """A class to represent a lexer.
 
@@ -31,13 +32,13 @@ class Lexer:
 
         # reserved words
         reservedWords = {
-            "BEG": "BEG",
+            "BEG": "INPUT",
             "PRINT": "PRINT",
         }
 
         # check if the value is an OPERATOR
         if value in operators:
-            return Token(operators[value])
+            return Token(operators[value], value)
 
         # check if the value is a RESERVED WORD
         if value in reservedWords:
@@ -56,11 +57,11 @@ class Lexer:
         # follows the EBNF rule VARIABLE = letter{(letter|digit)}
         if re.match(r"^[A-Za-z][A-Za-z0-9]*$", value):
             return Token("VARIABLE", value)
-    
+
         # TODO: test that this works
         # if the value is not any of the above, raise an exception
-        raise Exception(f"Unrecognized token: {value}")
-    
+        raise Exception(f"ERROR: Unrecognized token {value}")
+
     def tokenize(self, line):
         # This function will take a line of code and return a list of tokens
         # The tokens will be in the form of a list of tuples (type, value)
@@ -77,6 +78,6 @@ class Lexer:
         self.tokens = re.findall(r"\d+\.\d+?|\d+\.|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
         
         # iterate through the tokens and determine their type
-        self.tokens = [self.__make_token(value) for value in self.tokens]
+        self.tokens = [self.__make_token(value) for value in self.tokens] + [Token("EOF")]
 
         return self.tokens

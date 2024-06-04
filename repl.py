@@ -1,35 +1,32 @@
 from lexer.lexer import Lexer
 from parser.parser import Parser
-
-# from evaluator.evaluator import Evaluator
+from evaluator.evaluator import Evaluator
 
 
 def main():
     lexer = Lexer()
     parser = Parser()
-    # evaluator = Evaluator()
+    evaluator = Evaluator()
 
     print(
         "The SNOL environment is now active, you may proceed with giving your commands."
     )
     while True:
         try:
-            line = input("SNOL> ")
+            line = input("\nCommand: ")
             # if we have time, should add "did you mean" feature
             if line.strip() == "EXIT!":
                 break
 
             tokens = lexer.tokenize(line)
             ast = parser.parse(tokens)
-            # result = evaluator.evaluate(ast)
-
-            result = ast
-
-            print(tokens)
-            # print(result)
+            result = evaluator.evaluate(ast)
+            
+            # uncomment out to make a REPL
+            # print(f"SNOL :> {result}")
 
         except Exception as e:
-            print(e)
+            print(f"SNOL :> {e}")
 
     print("Evaluator is now terminated...")
 
