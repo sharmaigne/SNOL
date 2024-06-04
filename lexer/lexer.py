@@ -31,16 +31,17 @@ class Lexer:
 
         # reserved words
         reservedWords = {
-            "BEG": "INPUT",
-            "PRINT": "OUTPUT",
+            "BEG": "BEG",
+            "PRINT": "PRINT",
         }
 
         # check if the value is an OPERATOR
         if value in operators:
             return Token(operators[value])
 
+        # check if the value is a RESERVED WORD
         if value in reservedWords:
-            return Token(reservedWords[value])
+            return Token("KEYWORD", reservedWords[value])
 
         # check if the value is an INTEGER or a FLOAT
         # follows the EBNF rules:
@@ -58,7 +59,7 @@ class Lexer:
     
         # TODO: test that this works
         # if the value is not any of the above, raise an exception
-        return Exception(f"Unrecognized token: {value}")
+        raise Exception(f"Unrecognized token: {value}")
     
     def tokenize(self, line):
         # This function will take a line of code and return a list of tokens
@@ -67,12 +68,14 @@ class Lexer:
         # The token types will be 'ADD', 'NUMBER', 'STRING', 'VARIABLE', 'ASSIGN', 'LPAREN', 'RPAREN', 'COMMA', 'SEMI', 'EOF'
         # The token values will be the actual values of the tokens
 
-        # split the line into tokens by spaces eg "1 + 4" -> ["1", "+", "4"]
-        self.tokens = line.split()
-
-        # TODO: split even further to catch the ones not separated by spaces "BEG1.5+40" -> ["BEG", "1.5", "+", "40"]
+        # split the line into tokens by spaces eg "SUM=1.45+4" -> ["SUM", "=", "1.45", "+", "4"]
+        # \d+\.\d+? matches floats
+        # \d+\. matches floats with no decimal number
+        # \d+ matches integers
+        # [a-zA-Z0-9]+ matches words, cannot detect words starting with numbers
+        # [+\-*/%()=] matches operators
+        self.tokens = re.findall(r"\d+\.\d+?|\d+\.|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
         
-        # 1+4 5 
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens]
 

@@ -25,7 +25,7 @@ def main():
 
             result = ast
 
-            # print(tokens)
+            print(tokens)
             # print(result)
 
         except Exception as e:
