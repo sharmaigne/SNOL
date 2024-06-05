@@ -114,13 +114,13 @@ class TestEvaluator(unittest.TestCase):
     def test_evaluate_input(self):
         evaluator = Evaluator()
         node = InputNode('x', 'Enter a number: ')
-        with unittest.mock.patch('builtins.input', return_value='42'):
+        with mock.patch('builtins.input', return_value='42'):
             self.assertEqual(evaluator.evaluate(node), 42)
 
     def test_evaluate_print(self):
         evaluator = Evaluator()
         node = PrintNode(IntegerNode(42))
-        with unittest.mock.patch('builtins.print') as mocked_print:
+        with mock.patch('builtins.print') as mocked_print:
             evaluator.evaluate(node)
             mocked_print.assert_called_with('SNOL :> 42')
 
