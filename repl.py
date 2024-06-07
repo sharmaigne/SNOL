@@ -6,6 +6,15 @@ from evaluator.evaluator import Evaluator
 # if readline is not available (non unix systems), we create a dummy class to avoid errors
 try:
     import readline
+
+    print(
+        "\n".join(
+            [
+                str(readline.get_history_item(i + 1))
+                for i in range(readline.get_current_history_length())
+            ]
+        )
+    )
 except ImportError:
 
     class Readline:
