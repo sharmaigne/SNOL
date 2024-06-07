@@ -2,6 +2,21 @@ from lexer.lexer import Lexer
 from parser.parser import Parser
 from evaluator.evaluator import Evaluator
 
+# readline is a library that allows us to use the arrow keys to navigate through the command history
+# if readline is not available (non unix systems), we create a dummy class to avoid errors
+try:
+    import readline
+except ImportError:
+
+    class Readline:
+        @staticmethod
+        def parse_and_bind(*args, **kwargs):
+            pass
+
+    readline = Readline()
+
+readline.parse_and_bind("tab: complete")
+
 
 def main():
     lexer = Lexer()
@@ -21,9 +36,9 @@ def main():
             tokens = lexer.tokenize(line)
             ast = parser.parse(tokens)
             result = evaluator.evaluate(ast)
-            
+
             # uncomment out to make a REPL
-            # print(f"SNOL :> {result}")
+            print(f"SNOL :> {result}")
 
         except Exception as e:
             print(f"SNOL :> {e}")

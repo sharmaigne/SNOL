@@ -48,43 +48,40 @@ class Evaluator:
 
         # ALGEBRAIC OPERATORS
 
-        if node.op == "+":
-            return left + right
-        if node.op == "-":
-            return left - right
-        if node.op == "*":
-            return left * right
-        if node.op == "/":
-            # integer division since python defaults to float division
-            if type(left) == int and type(right) == int:
-                return left // right
-            return left / right
-        if node.op == "%":
-            return left % right
-        if node.op == "**":
-            return left**right
-
-        # COMPARISON OPERATORS
-
-        if node.op == "==":
-            return true if left == right else false
-        if node.op == "!=":
-            return true if left != right else false
-        if node.op == "<=":
-            return true if left <= right else false
-        if node.op == ">=":
-            return true if left >= right else false
-        if node.op == "<":
-            return true if left < right else false
-        if node.op == ">":
-            return true if left > right else false
-
-        # BOOLEAN OPERATORS
-
-        if node.op == "&&":
-            return true if left and right else false
-        if node.op == "||":
-            return true if left or right else false
+        match node.op:
+            case "+":
+              return left + right
+            case "-":
+                return left - right
+            case "*":
+                return left * right
+            case "/":
+                # integer division since python defaults to float division
+                if type(left) == int and type(right) == int:
+                    return left // right
+                return left / right
+            case "%":
+                return left % right
+            case "**":
+                return left**right
+            case "==":
+                return true if left == right else false
+            case "!=":
+                return true if left != right else false
+            case "<=":
+                return true if left <= right else false
+            case ">=":
+                return true if left >= right else false
+            case "<":
+                return true if left < right else false
+            case ">":
+                return true if left > right else false
+            case "&&":
+                return true if left and right else false
+            case "||":
+                return true if left or right else false
+            case _:
+                raise Exception(f"Invalid binary operator: {node.op}")
 
         # //, **, <, >, <=, >=, ==, !=, ||, &&
 
