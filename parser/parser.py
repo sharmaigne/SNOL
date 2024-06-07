@@ -28,6 +28,8 @@ print := PRINT (expression)
 input := BEG VARIABLE
 """
 
+from lexer.token import Token
+
 ### NODES ###
 
 
@@ -89,13 +91,13 @@ class Parser:
 
     def __init__(self):
         self.tokens = []
-        self.current_token = None
+        self.current_token: Token = Token("", "")
         self.index = 0
 
-    def __eat(self, token_type):
+    def __eat(self, token_type):    
         if self.current_token.type == "EOF":
             return
-
+        
         if self.current_token.type == token_type:
             self.index += 1
             self.current_token = self.tokens[self.index]
@@ -108,10 +110,11 @@ class Parser:
     def parse(self, tokens):
         self.tokens = tokens
         self.index = 0
-        self.current_token = self.tokens[self.index] if self.tokens else None
+        self.current_token = self.tokens[self.index] if self.tokens else Token("EOF", "")
         return self.command()
 
     def command(self):
+        line_ast = None
         if self.tokens[self.index + 1].type == "ASSIGN":  # example: x = 43.4 + 2
             line_ast = self.assign()
 
