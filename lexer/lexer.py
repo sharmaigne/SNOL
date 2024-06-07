@@ -14,6 +14,7 @@ class Lexer:
 
         # token types
         # "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "LPAREN", "RPAREN", "ASSIGN"
+        # //, **, <, >, <=, >=, ==, !=, ||, &&, and !
         # "INTEGER", "FLOAT", "VARIABLE"
         # "INPUT", "OUTPUT"
 
@@ -27,6 +28,17 @@ class Lexer:
             "(": "LPAREN",
             ")": "RPAREN",
             "=": "ASSIGN",
+            "//": "//",
+            "**": "**",
+            "<": "<",
+            ">": ">",
+            "<=": "<=",
+            ">=": ">=",
+            "==": "==",
+            "!=": "!=",
+            "||": "||",
+            "&&": "&&",
+            "!": "!",
         }
 
         # reserved words
@@ -74,7 +86,8 @@ class Lexer:
         # \d+ matches integers
         # [a-zA-Z0-9]+ matches words, cannot detect words starting with numbers
         # [+\-*/%()=] matches operators
-        self.tokens = re.findall(r"\d+\.\d+?|\d+\.|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
+        # \|\||&&|\/\/|\*\*|<=?|>=?|==|!= matches additional operators
+        self.tokens = re.findall(r"\d+\.\d+?|\d+\.|\d+|[a-zA-Z0-9]+|\|\||&&|\/\/|\*\*|<=?|>=?|==|!=|[+\-*/%()=!><]", line)
         
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens]
