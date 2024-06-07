@@ -14,3 +14,13 @@ class Token:
 
     def __repr__(self):
         return self.__str__()
+    
+    # Checks if this token is equal to another token
+    def __eq__(self, other):
+        if isinstance(other, Token):
+            return self.type == other.type and self.value == other.value
+        return False
+
+    # Returns the hash value of the token based on its type and value
+    def __hash__(self):
+        return hash((self.type, self.value))
