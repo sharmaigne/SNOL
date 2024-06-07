@@ -15,6 +15,7 @@ class Lexer:
 
         # token types
         # "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "LPAREN", "RPAREN", "ASSIGN"
+        # //, **, <, >, <=, >=, ==, !=, ||, &&, and !
         # "INTEGER", "FLOAT", "VARIABLE"
         # "INPUT", "OUTPUT"
         
@@ -36,6 +37,7 @@ class Lexer:
             "||": "PRED_1",
             "(": "LPAREN",
             ")": "RPAREN",
+            "=": "ASSIGN",
         }
 
         # reserved words
@@ -78,12 +80,12 @@ class Lexer:
         # The token values will be the actual values of the tokens
 
         # split the line into tokens by spaces eg "SUM=1.45+4" -> ["SUM", "=", "1.45", "+", "4"]
-        # \d+\.\d+? matches floats
-        # \d+\. matches floats with no decimal number
-        # \d+ matches integers
-        # [a-zA-Z0-9]+ matches words, cannot detect words starting with numbers
-        # [+\-*/%()=] matches operators
-        self.tokens = re.findall(r"\d+\.\d+?|\d+\.|\d+|[a-zA-Z0-9]+|[+\-*/%()=]", line)
+        # \d+\.?\d* matches all numbers
+        # [^_\W]+ matches words, does not count words starting with numbers
+        # \|\||&&|\/|\*\*|<=?|>=?|==|!= matches double sign operators
+        # [+\-*/%() =!><] matches single sign operators
+        # \S+? matches all items, used to catch unrecognized tokens
+        self.tokens = re.findall(r"\d+\.?\d*|[^_\W]+|\|\||&&|\/|\*\*|<=?|>=?|==|!=|[+\-*/%() =!><]|\S+?", line)
         
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens] + [
