@@ -86,7 +86,6 @@ class Lexer:
         # [+\-*/%() =!><] matches single sign operators
         # \S+? matches all items, used to catch unrecognized tokens
         self.tokens = re.findall(r"\d+\.?\d*|[^_\W]+|\|\||&&|\/|\*\*|<=?|>=?|==|!=|[+\-*/%()=!><]|\S+?", line)
-        print(self.tokens)
         
         # iterate through the tokens and determine their type
         self.tokens = [self.__make_token(value) for value in self.tokens] + [

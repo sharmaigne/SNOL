@@ -38,7 +38,7 @@ def main():
             result = evaluator.evaluate(ast)
 
             # uncomment out to make a REPL
-            print(f"SNOL :> {result}")
+            # print(f"SNOL :> {result}")
 
         except Exception as e:
             print(f"SNOL :> {e}")
