@@ -94,10 +94,10 @@ class Parser:
         self.current_token: Token = Token("", "")
         self.index = 0
 
-    def __eat(self, token_type):    
+    def __eat(self, token_type):
         if self.current_token.type == "EOF":
             return
-        
+
         if self.current_token.type == token_type:
             self.index += 1
             self.current_token = self.tokens[self.index]
@@ -110,7 +110,9 @@ class Parser:
     def parse(self, tokens):
         self.tokens = tokens
         self.index = 0
-        self.current_token = self.tokens[self.index] if self.tokens else Token("EOF", "")
+        self.current_token = (
+            self.tokens[self.index] if self.tokens else Token("EOF", "")
+        )
         return self.command()
 
     def command(self):
@@ -152,9 +154,12 @@ class Parser:
 
     def print_(self):
         self.__eat("KEYWORD")
-        # value = self.expression()
+        variable = None
+        if self.current_token.type == "VARIABLE":
+            variable = self.current_token.value
         value = self.or_()
-
+        if variable:
+            return PrintNode(value, variable)
         return PrintNode(value)
 
     def or_(self):
