@@ -3,9 +3,8 @@ from unittest import mock
 from lexer.lexer import Lexer
 from lexer.token import Token
 from parser.parser import Parser
-from parser.parser import AssignmentNode, BinaryOpNode, IntegerNode, VariableAccessNode, InputNode, PrintNode
+from parser.parser import AssignmentNode, BinaryOpNode, IntegerNode, FloatNode, VariableAccessNode, InputNode, PrintNode
 from evaluator.evaluator import Evaluator
-
 
 class TestLexer(unittest.TestCase):
 
@@ -15,9 +14,9 @@ class TestLexer(unittest.TestCase):
         tokens = lexer.tokenize(code)
         expected_tokens = [
             Token('INTEGER', 3),
-            Token('PLUS', '+'),
+            Token('PRED_5', '+'),
             Token('INTEGER', 4),
-            Token('MULTIPLY', '*'),
+            Token('PRED_6', '*'),
             Token('INTEGER', 10),
             Token('EOF', None)
         ]
@@ -29,7 +28,7 @@ class TestLexer(unittest.TestCase):
         tokens = lexer.tokenize(code)
         expected_tokens = [
             Token('INTEGER', 42),
-            Token('PLUS', '+'),
+            Token('PRED_5', '+'),
             Token('INTEGER', 23),
             Token('EOF', None)
         ]
@@ -54,15 +53,14 @@ class TestLexer(unittest.TestCase):
         expected_tokens = [
             Token('LPAREN', '('),
             Token('VARIABLE', 'a'),
-            Token('PLUS', '+'),
+            Token('PRED_5', '+'),
             Token('VARIABLE', 'b'),
             Token('RPAREN', ')'),
-            Token('MULTIPLY', '*'),
+            Token('PRED_6', '*'),
             Token('VARIABLE', 'c'),
             Token('EOF', None)
         ]
         self.assertEqual(tokens, expected_tokens)
-
 
 class TestParser(unittest.TestCase):
 
@@ -83,9 +81,9 @@ class TestParser(unittest.TestCase):
         parser = Parser()
         tokens = [
             Token('INTEGER', 3),
-            Token('PLUS', '+'),
+            Token('PRED_5', '+'),
             Token('INTEGER', 4),
-            Token('MULTIPLY', '*'),
+            Token('PRED_6', '*'),
             Token('INTEGER', 10),
             Token('EOF', None)
         ]
@@ -97,6 +95,19 @@ class TestParser(unittest.TestCase):
         self.assertEqual(ast.right.op, expected_ast.right.op)
         self.assertEqual(ast.right.right.value, expected_ast.right.right.value)
 
+    def test_float_expression(self):
+        parser = Parser()
+        tokens = [
+            Token('FLOAT', 3.5),
+            Token('PRED_5', '+'),
+            Token('FLOAT', 4.2),
+            Token('EOF', None)
+        ]
+        ast = parser.parse(tokens)
+        expected_ast = BinaryOpNode(FloatNode(3.5), '+', FloatNode(4.2))
+        self.assertEqual(ast.left.value, expected_ast.left.value)
+        self.assertEqual(ast.op, expected_ast.op)
+        self.assertEqual(ast.right.value, expected_ast.right.value)
 
 class TestEvaluator(unittest.TestCase):
 
@@ -124,7 +135,6 @@ class TestEvaluator(unittest.TestCase):
             evaluator.evaluate(node)
             mocked_print.assert_called_with('SNOL :> 42')
 
-
 class TestIntegration(unittest.TestCase):
 
     def test_lexer_parser_evaluator(self):
@@ -139,6 +149,17 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(result, 11)
         self.assertEqual(evaluator.environment['x'], 11)
 
+    def test_lexer_parser_evaluator_with_floats(self):
+        lexer = Lexer()
+        parser = Parser()
+        evaluator = Evaluator()
+
+        code = 'y = 3.5 + 4.2'
+        tokens = lexer.tokenize(code)
+        ast = parser.parse(tokens)
+        result = evaluator.evaluate(ast)
+        self.assertEqual(result, 7.7)
+        self.assertEqual(evaluator.environment['y'], 7.7)
 
 if __name__ == "__main__":
     unittest.main()
