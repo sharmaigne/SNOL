@@ -38,10 +38,15 @@ class Evaluator:
         left = self.evaluate(node.left)
         right = self.evaluate(node.right)
 
+        true = type(left)(1)
+        false = type(left)(0)
+
         if type(left) != type(right):
             raise Exception(
                 "Error! Operands must be of the same type in an arithmetic operation!"
             )
+
+        # ALGEBRAIC OPERATORS
 
         if node.op == "+":
             return left + right
@@ -56,6 +61,31 @@ class Evaluator:
             return left / right
         if node.op == "%":
             return left % right
+        if node.op == "**":
+            return left**right
+
+        # COMPARISON OPERATORS
+
+        if node.op == "==":
+            return true if left == right else false
+        if node.op == "!=":
+            return true if left != right else false
+        if node.op == "<=":
+            return true if left <= right else false
+        if node.op == ">=":
+            return true if left >= right else false
+        if node.op == "<":
+            return true if left < right else false
+        if node.op == ">":
+            return true if left > right else false
+
+        # BOOLEAN OPERATORS
+
+        if node.op == "&&":
+            return true if left and right else false
+        if node.op == "||":
+            return true if left or right else false
+
         # //, **, <, >, <=, >=, ==, !=, ||, &&
 
         raise Exception(f"Invalid binary operator: {node.op}")
@@ -65,6 +95,8 @@ class Evaluator:
 
         if node.op == "-":
             return -number
+        if node.op == "!":
+            return type(number)(1) if number == 0 else type(number)(0)
         # !, ~
 
         raise Exception(f"Invalid unary operator: {node.op}")

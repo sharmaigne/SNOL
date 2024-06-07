@@ -2,9 +2,27 @@
 SNOL (Simple Number-Only Language) GRAMMAR:
 command: (assign | expression | input | print) END
 assign := VARIABLE ASSIGN expression
-expression := term { (PLUS | MINUS) term }
-term := factor { (MULTIPLY | DIVIDE | MODULO) factor }
+
+
+# GIRL I CANNOT THINK OF BETTER NAMES unsay or and not
+or := and { || and}
+and := not { && not}
+not := comparison { ! comparison}
+comparison := { ( == | != | <= | >= | < | > ) }
+expression := term { (PLUS | MINUS) term }                              # PRED_5
+term := multiple { (MULTIPLY | DIVIDE | MODULO) multiple }              # PRED_6
+multiple := factor { EXPONENT factor }                                  # PRED_7
 factor := INTEGER | FLOAT | LPAREN expression RPAREN | VARIABLE
+
+            "==": "PRED_4",
+            "!=": "PRED_4",
+            "<=": "PRED_4",
+            ">=": "PRED_4",
+            "<": "PRED_4",
+            ">": "PRED_4",
+            "!": "PRED_3",
+            "&&": "PRED_2",
+            "||": "PRED_1",
 
 print := PRINT (expression)
 input := BEG VARIABLE
@@ -108,7 +126,7 @@ class Parser:
 
         else:
             line_ast = (
-                self.expression()
+                self.or_()
             )  # catches both variable and number first eg x + 4. 4 + 2
 
         if self.current_token.type == "EOF":
@@ -134,21 +152,62 @@ class Parser:
 
     def print_(self):
         self.__eat("KEYWORD")
-        value = self.expression()
+        # value = self.expression()
+        value = self.or_()
 
         return PrintNode(value)
 
+    def or_(self):
+        node = self.and_()
+        while self.current_token.type == "PRED_1":
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.and_())
+        return node
+
+    def and_(self):
+        node = self.not_()
+        while self.current_token.type == "PRED_2":
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.not_())
+        return node
+
+    def not_(self):
+        node = self.comparison()
+        while self.current_token.type == "PRED_3":
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.comparison())
+        return node
+
+    def comparison(self):
+        node = self.expression()
+        while self.current_token.type == "PRED_4":  # ==, !=, >=, <=, >, <
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.expression())
+        return node
+
     def expression(self):
         node = self.term()
-        while self.current_token.type in ("PLUS", "MINUS"):
+        while self.current_token.type == "PRED_5":  # PLUS or MINUS
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.term())
         return node
 
     def term(self):
+        node = self.multiple()
+        while self.current_token.type == "PRED_6":  # MULTIPLY, DIVIDE, MODULO
+            op = self.current_token.value
+            self.__eat(self.current_token.type)
+            node = BinaryOpNode(node, op, self.multiple())
+        return node
+
+    def multiple(self):
         node = self.factor()
-        while self.current_token.type in ("MULTIPLY", "DIVIDE", "MODULO"):
+        while self.current_token.type == "PRED_7":  # EXPONENT (**)
             op = self.current_token.value
             self.__eat(self.current_token.type)
             node = BinaryOpNode(node, op, self.factor())
@@ -167,8 +226,8 @@ class Parser:
             self.__eat("LPAREN")
             node = self.expression()
             self.__eat("RPAREN")
-        elif self.current_token.type == "MINUS":
-            self.__eat("MINUS")
+        elif self.current_token.value == "-":
+            self.__eat("PRED_5")
             node = UnaryOpNode("-", self.factor())
         elif self.current_token.type == "VARIABLE":
             node = VariableAccessNode(self.current_token.value)
