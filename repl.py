@@ -22,15 +22,7 @@ except ImportError:
             pass
     readline = Readline()
 
-
-def completer(text, state):
-    options = ["option1", "option2", "option3"]
-    matches = [i for i in options if i.startswith(text)]
-    return matches[state] if state < len(matches) else None
-
 def main():
-    readline.set_completer(completer)
-    readline.parse_and_bind("tab: complete")
     lexer = Lexer()
     parser = Parser()
     evaluator = Evaluator()
