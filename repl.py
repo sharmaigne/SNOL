@@ -7,28 +7,30 @@ from evaluator.evaluator import Evaluator
 try:
     import readline
 
-    print(
-        "\n".join(
-            [
-                str(readline.get_history_item(i + 1))
-                for i in range(readline.get_current_history_length())
-            ]
-        )
-    )
 except ImportError:
-    print("Note: Readline is not available on this system, command history will not be available.")
+    print(
+        "Note: Readline is not available on this system, command history will not be available."
+    )
 
     class Readline:
         @staticmethod
-        def parse_and_bind(*args, **kwargs):
+        def set_completer(*args, **kwargs):
             pass
 
+        @staticmethod
+        def parse_and_bind(*args, **kwargs):
+            pass
     readline = Readline()
 
-readline.parse_and_bind("tab: complete")
 
+def completer(text, state):
+    options = ["option1", "option2", "option3"]
+    matches = [i for i in options if i.startswith(text)]
+    return matches[state] if state < len(matches) else None
 
 def main():
+    readline.set_completer(completer)
+    readline.parse_and_bind("tab: complete")
     lexer = Lexer()
     parser = Parser()
     evaluator = Evaluator()
@@ -51,7 +53,6 @@ def main():
 
             # uncomment out to make a REPL
             # print(f"SNOL :> {result}")
-            print(f"Tokens: {tokens}")
 
         except Exception as e:
             print(f"SNOL :> {e}")
