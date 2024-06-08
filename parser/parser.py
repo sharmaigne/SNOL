@@ -1,30 +1,18 @@
 """
 SNOL (Simple Number-Only Language) GRAMMAR:
-command: (assign | expression | input | print) END
-assign := VARIABLE ASSIGN expression
+command: (assign | or | input | print) END
+assign := VARIABLE ASSIGN or
 
-
-# GIRL I CANNOT THINK OF BETTER NAMES unsay or and not
-or := and { || and}
-and := not { && not}
-not := comparison { ! comparison}
-comparison := { ( == | != | <= | >= | < | > ) }
+or := and { || and}                                                     # PRED_1
+and := not { && not}                                                    # PRED_2
+not := comparison { ! comparison}                                       # PRED_3
+comparison := { ( == | != | <= | >= | < | > ) }                         # PRED_4   
 expression := term { (PLUS | MINUS) term }                              # PRED_5
 term := multiple { (MULTIPLY | DIVIDE | MODULO) multiple }              # PRED_6
 multiple := factor { EXPONENT factor }                                  # PRED_7
-factor := INTEGER | FLOAT | LPAREN expression RPAREN | VARIABLE
+factor := INTEGER | FLOAT | LPAREN or RPAREN | VARIABLE
 
-            "==": "PRED_4",
-            "!=": "PRED_4",
-            "<=": "PRED_4",
-            ">=": "PRED_4",
-            "<": "PRED_4",
-            ">": "PRED_4",
-            "!": "PRED_3",
-            "&&": "PRED_2",
-            "||": "PRED_1",
-
-print := PRINT (expression)
+print := PRINT (or)
 input := BEG VARIABLE
 """
 
@@ -229,7 +217,7 @@ class Parser:
             self.__eat("FLOAT")
         elif self.current_token.type == "LPAREN":
             self.__eat("LPAREN")
-            node = self.expression()
+            node = self.or_()
             self.__eat("RPAREN")
         elif self.current_token.value == "-":
             self.__eat("PRED_5")
