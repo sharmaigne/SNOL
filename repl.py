@@ -41,6 +41,8 @@ def main():
             # if we have time, should add "did you mean" feature
             if line.strip() == "EXIT!":
                 break
+            if line.strip() == "":
+                continue
 
             tokens = lexer.tokenize(line)
             ast = parser.parse(tokens)
@@ -48,6 +50,7 @@ def main():
 
             # uncomment out to make a REPL
             # print(f"SNOL :> {result}")
+
 
         except Exception as e:
             print(f"SNOL :> {e}")
