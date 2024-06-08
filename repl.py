@@ -16,6 +16,7 @@ try:
         )
     )
 except ImportError:
+    print("Note: Readline is not available on this system, command history will not be available.")
 
     class Readline:
         @staticmethod
@@ -50,7 +51,7 @@ def main():
 
             # uncomment out to make a REPL
             # print(f"SNOL :> {result}")
-
+            print(f"Tokens: {tokens}")
 
         except Exception as e:
             print(f"SNOL :> {e}")
