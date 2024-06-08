@@ -171,7 +171,7 @@ class Parser:
         while self.current_token.type == "PRED_3":
             op = self.current_token.value
             self.__eat(self.current_token.type)
-            node = BinaryOpNode(node, op, self.comparison())
+            node = UnaryOpNode(op, self.comparison())
         return node
 
     def comparison(self):

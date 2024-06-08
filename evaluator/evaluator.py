@@ -85,18 +85,16 @@ class Evaluator:
 
         # //, **, <, >, <=, >=, ==, !=, ||, &&
 
-        raise Exception(f"Invalid binary operator: {node.op}")
-
     def evaluate_UnaryOpNode(self, node):
         number = self.evaluate(node.node)
 
-        if node.op == "-":
-            return -number
-        if node.op == "!":
-            return type(number)(1) if number == 0 else type(number)(0)
-        # !, ~
-
-        raise Exception(f"Invalid unary operator: {node.op}")
+        match node.op:
+            case "-":
+                return -number
+            case "!":
+                return type(number)(1) if number == 0 else type(number)(0)
+            case _:
+                raise Exception(f"Invalid unary operator: {node.op}")
 
     ### INPUT/OUTPUT ###
     def evaluate_InputNode(self, node):
